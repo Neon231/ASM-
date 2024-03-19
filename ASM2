@@ -1,0 +1,55 @@
+# Function to read data from file and store it in a dictionary
+def read_data(filename):
+    stock_data = {}
+    with open(filename, 'r') as file:
+        n = int(file.readline().strip())
+        for _ in range(n):
+            for _ in range(10):
+                line = file.readline().strip().split()
+                stock_code, open_price, close_price = line[0], float(line[1]), float(line[2])
+                if stock_code not in stock_data:
+                    stock_data[stock_code] = []
+                stock_data[stock_code].append((open_price, close_price))
+    return stock_data
+
+# Function to calculate and print average price difference for each stock
+def print_average_difference(stock_data):
+    for stock_code, prices in sorted(stock_data.items()):
+        price_difference = sum(close - open for open, close in prices) / len(prices)
+        print(f"Stock: {stock_code}, Average Difference: {price_difference:.3f}")
+
+# Function to search for a stock and print its highest and lowest closing prices
+def search_stock(stock_data, stock_code):
+    if stock_code in stock_data:
+        highest_close = max(close for _, close in stock_data[stock_code])
+        lowest_close = min(close for _, close in stock_data[stock_code])
+        print(f"Highest closing price for {stock_code}: {highest_close}")
+        print(f"Lowest closing price for {stock_code}: {lowest_close}")
+    else:
+        print("Stock code not found.")
+
+# Main menu function
+def main_menu():
+    print("1. Read data from file and print average price difference for each stock")
+    print("2. Search for a stock by its code")
+    print("3. Exit")
+    choice = input("Enter your choice: ")
+    return choice
+
+# Main program
+if __name__ == "__main__":
+    filename = "data.txt"
+    stock_data = {}
+    while True:
+        choice = main_menu()
+        if choice == '1':
+            stock_data = read_data(filename)
+            print_average_difference(stock_data)
+        elif choice == '2':
+            stock_code = input("Enter the stock code: ")
+            search_stock(stock_data, stock_code)
+        elif choice == '3':
+            print("Exiting program.")
+            break
+        else:
+            print("Invalid choice. Please try again.")
